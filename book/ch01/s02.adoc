@@ -1,0 +1,185 @@
+:imagesdir: images
+ifeval::["{docname}" == "index"]
+:imagesdir: ch01/images
+endif::[]
+
+== Installing Uyuni
+
+This book assumes you have access to a system with openSUSE Tumbleweed with the following hardware requirements:
+
+* RAM: 16GB
+* CPU: 4 cores
+* Disk space: 250GB (more is recommended in case you plan on using the Uyuni instance in production and want to manage RHEL or RHEL-based systems)
+
+This system can be a virtual machine. Because Uyuni is distributed as a set of containers, it is possible to deploy Uyuni on any Linux host that packages Podman. However, openSUSE Tumbleweed is supported by the Uyuni community.
+
+To deploy Uyuni, execute the following steps:
+
+. As the `root` user, add the repository that contains Uyuni tooling.
++
+[source,none]
+----
+# zypper ar https://download.opensuse.org/repositories/systemsmanagement:/Uyuni:/Stable/images/repo/Uyuni-Server-POOL-$(arch)-Media1/ uyuni-server-stable
+Adding repository 'uyuni-server-stable' ......[done]
+Repository 'uyuni-server-stable' successfully added
+
+URI         : https://download.opensuse.org/repositories/systemsmanagement:/Uyuni:/Stable/images/repo/Uyuni-Server-POOL-x86_64-Media1/
+Enabled     : Yes
+GPG Check   : Yes
+Autorefresh : No
+Priority    : 99 (default priority)
+
+Repository priorities are without effect. All enabled repositories share the same priority.
+----
+
+. Refresh the repository metadata and accept the repository GPG key.
++
+[source,none]
+----
+# zypper ref
+... output omitted...
+Looking for gpg keys in repository uyuni-server-stable.
+  gpgkey=https://download.opensuse.org/repositories/systemsmanagement:/Uyuni:/Stable/images/repo/Uyuni-Server-POOL-x86_64-Media1/repodata/repomd.xml.key
+...output omitted...
+Do you want to reject the key, trust temporarily, or trust always? [r/t/a/?] (r): a <.>
+...output omitted...
+All repositories have been refreshed.
+----
+<.> Enter `a` to always trust the repository GPG key.
+
+. Install the deployment tooling.
++
+[source,none]
+----
+# zypper in -y podman mgradm mgrctl mgradm-bash-completion mgrctl-bash-completion
+...output omitted...
+The following 2 recommended packages were automatically selected:
+  criu gvisor-tap-vsock
+
+The following 20 NEW packages are going to be installed:
+  aardvark-dns catatonit conmon ...output omitted...
+  mgradm mgradm-bash-completion mgrctl mgrctl-bash-completion
+...output omitted...
+----
+
+. Ensure that the system can resolve the fully-qualified domain name of the system.
++
+[source,none]
+----
+# hostname
+uyuni.tf.local
+# ping -c1 $(hostname)
+PING localhost (127.0.0.1) 56(84) bytes of data.
+64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 time=0.042 ms
+----
+
+. Use `mgradm` to deploy Uyuni containers.
++
+[source,none]
+----
+# mgradm install podman uyuni.tf.local
+4:09PM INF Starting mgradm install podman uyuni.tf.local
+4:09PM INF Use of this software implies acceptance of the End User License Agreement.
+Password for the CA key to generate: <.> 
+Confirm the password: <.>
+Administrator password: <.>
+Confirm the password: <.>
+4:10PM INF Setting up the server with the FQDN 'uyuni.tf.local'
+4:10PM INF Computed image name is registry.opensuse.org/uyuni/server:latest
+4:10PM INF Computed image name is registry.opensuse.org/uyuni/server-postgresql:latest
+...output omitted...
+4:10PM INF Waiting for the server to start…
+...output omitted...
+----
+<.> Enter a CA key password.
+<.> Repeat the password.
+<.> Enter the administrator password.
+<.> Repeat the password.
+
+. Verify that the Server and database containers are running.
++
+[source,none]
+----
+# podman ps --format "{{.Names}}\t{{.Status}}"
+uyuni-db	    Up 6 minutes (healthy)
+uyuni-server	Up 5 minutes (healthy)
+----
+
+. In a web browser, open the FQDN or the IP address of the server where you deployed Uyuni. Accept the self-signed certificate to access the Uyuni web UI. Use the `admin` username and password that you selected during installation to log in.
++
+.Uyuni Web Interface
+image::deployment-login.png["Uyuni web UI"]
+
+. In a command line, enter the `uyuni-server` container.
++
+[source,none]
+----
+# mgrctl term
+========================================
+!
+! This shell operates within a container
+! environment, meaning that not all
+! modifications will be permanently 
+! saved in volumes.
+!
+! Please exercise caution when making 
+! changes, as some alterations may not
+! persist beyond the current session.
+!
+========================================
+uyuni-server:/ # 
+----
+
+. Verify the list of available units.
++
+[source,none]
+----
+uyuni-server:/ # spacewalk-service list
+apache2.service                            enabled         disabled
+cobbler-refresh-mkloaders.service          static          -
+cobblerd.service                           enabled         disabled
+rhn-search.service                         enabled         disabled
+salt-api.service                           enabled         disabled
+salt-master.service                        enabled         disabled
+salt-secrets-config.service                static          -
+spacewalk-wait-for-salt.service            static          -
+spacewalk-wait-for-taskomatic.service      static          -
+spacewalk-wait-for-tomcat.service          static          -
+taskomatic.service                         enabled         disabled
+tomcat.service                             enabled         disabled
+uyuni-check-database.service               static          -
+uyuni-update-config.service                static          -
+----
+
+. Verify that for example `salt-master` is up and running.
++
+[source,none]
+----
+uyuni-server:/ # systemctl status salt-master
+● salt-master.service - The Salt Master Server
+     Loaded: loaded (/usr/lib/systemd/system/salt-master.service; enabled; preset: disabled)
+    Drop-In: /usr/lib/systemd/system/salt-master.service.d
+             └─override.conf
+...output omitted...
+----
+
+. Explore logs from various Uyuni services.
++
+[source,none]
+----
+uyuni-server:/ # ls /var/log/salt/
+api     master  minion
+uyuni-server:/ # ls -l /var/log/rhn/
+total 20
+-rw-r--r--. 1 tomcat www       0 Oct 31 17:41 gatherer.log
+drwxr-xr-x. 1 root   www       0 Oct 27 15:45 reposync
+-rw-r--r--. 1 root   root   1028 Dec  1 16:10 rhn_installation.log
+-rw-------. 1 root   root      0 Dec  1 16:11 rhn_payg_dimensions.log
+-rw-------. 1 tomcat tomcat    0 Dec  1 16:10 rhn_salt_remote_commands.log
+-rw-------. 1 root   root   2049 Dec  1 16:11 rhn_taskomatic_daemon.log
+-rw-------. 1 tomcat www     392 Dec  1 16:15 rhn_web_api.log
+-rw-------. 1 tomcat tomcat  253 Dec  1 16:20 rhn_web_frontend.log
+-rw-------. 1 tomcat tomcat  657 Dec  1 16:20 rhn_web_ui.log
+drwxr-xr-x. 1 root   root     70 Dec  1 16:11 search
+----
+

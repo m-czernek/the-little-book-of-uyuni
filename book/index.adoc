@@ -44,6 +44,7 @@ include::ch01/s03.adoc[]
 
 include::ch02/s01.adoc[]
 include::ch02/s02.adoc[]
+include::ch02/s03.adoc[]
 
 
 // include::chapter-02-The-Rocket/content.adoc[]

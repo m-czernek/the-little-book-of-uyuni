@@ -34,7 +34,11 @@ The part of a {lm} that enables users to scale {lm}. You can register managed se
 Client::
 {lm} considers clients to be systems that it manages. Clients use the Salt footnote:[https://saltproject.io/] automation framework to establish bidirectional communication between a server (or proxy) and itself. This means that the server can issue commands to the clients, allowing you to for example install or remove packages from the web interface. Similarly, clients report data back to the server, for example what packages and its versions are installed.
 
-This book focuses on the {lm} server and client parts.
+Hub and Peripheral Servers::
+When one Server cannot handle the number of clients, {lm} enables users to scale their infrastructure by deploying multiple Peripheral Servers that each manage a subset of clients. The Peripheral Servers are then managed by a single Hub Server, which provides centralized information to the users via the web UI.
+This enables users to manage tens of thousands of clients.
+
+This book focuses on the {lm} Server and client. Proxies, large-scale environments, air-gapped environments, and cloud environments are out of scope for this book.
 
 == {lm} Server Architecture
 

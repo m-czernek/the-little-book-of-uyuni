@@ -3,7 +3,7 @@ ifeval::["{docname}" == "index"]
 :imagesdir: ch01/images
 endif::[]
 
-== Installing Uyuni
+== EXERCISE: Installing Uyuni
 
 This book assumes you have access to a system with openSUSE Tumbleweed with the following hardware requirements:
 

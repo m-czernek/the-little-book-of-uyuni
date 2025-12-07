@@ -17,13 +17,13 @@ One of {lm}'s fundamental concepts is synchronizing software packages, and actin
 The following concepts enable you to manage software packages in {lm}:
 
 Repository::
-A repository locates a package repository that you want to mirror, and serve to clients. A repository defines a URL, repository type (`yum`/`dnf`, `deb`, or `uln`), and repository metadata. Some repositories, for example the Red Hat repositories, might require authentication data, such as SSL CA, client, and key certificates.
+A repository footnote:[https://www.uyuni-project.org/uyuni-docs/en/uyuni/client-configuration/repositories.html] locates a package repository that you want to mirror, and serve to clients. A repository defines a URL, repository type (`yum`/`dnf`, `deb`, or `uln`), and repository metadata. Some repositories, for example the Red Hat repositories, might require authentication data, such as SSL CA, client, and key certificates.
 +
 You can additionally restrict which packages to mirror by using repository filters.
 
 Channel::
 --
-A channel groups one or more repositories to serve them to clients. You can think of a channel as a collection of packages that {lm} serves to clients. You assign channels to clients. Clients then get access to the packages based on the assigned repositories of that channel.
+A channel footnote:[https://www.uyuni-project.org/uyuni-docs/en/uyuni/client-configuration/channels.html] groups one or more repositories to serve them to clients. You can think of a channel as a collection of packages that {lm} serves to clients. You assign channels to clients. Clients then get access to the packages based on the assigned repositories of that channel.
 
 In {lm}, you can define the following channel types:
 
@@ -38,7 +38,7 @@ You assign one base channel to one client. Additionally, you can further assign 
 --
 
 Bootstrap Repository::
-Bootstrap repository provides all packages necessary to bootstrap a specific client to {lm}. For example, to bootstrap a Ubuntu client, {lm} must install a Salt client. This Salt client must come from {lm} to ensure compatibility between the Salt master and clients. A bootstrap repository contains, among other packages, a Salt `deb` package that {lm} installs on the registered client during the registration process.
+Bootstrap repository footnote:[https://www.uyuni-project.org/uyuni-docs/en/uyuni/client-configuration/bootstrap-repository.html] provides all packages necessary to bootstrap a specific client to {lm}. For example, to bootstrap a Ubuntu client, {lm} must install a Salt client. This Salt client must come from {lm} to ensure compatibility between the Salt master and clients. A bootstrap repository contains, among other packages, a Salt `deb` package that {lm} installs on the registered client during the registration process.
 
 Repository synchronization, or _reposync_, is a process of mirroring one or multiple operating system repositories into {lm}. For example, to bootstrap an openSUSE Leap 15.6 x86_64 client, you enable the predefined repository and channels for that OS. Then, {lm} synchronizes the repositories into a local storage, and creates a bootstrap repository. Only then you can register an openSUSE Leap 15.6 x86_64 client.
 

@@ -4,7 +4,7 @@ For {lm} to manage any system, such system must be registered as a client. {lm} 
 
 Salt Bundle::
 --
-Salt Bundle is a distribution of Salt that is designed to work with {lm}. Salt Bundle, which is the `venv-salt-minion` package, is a Python virtual environment that contains Salt, as well as all of the runtime dependencies to run Salt.
+Salt Bundle footnote:[https://www.uyuni-project.org/uyuni-docs/en/uyuni/client-configuration/contact-methods-saltbundle.html] is a distribution of Salt that is designed to work with {lm}. Salt Bundle, which is the `venv-salt-minion` package, is a Python virtual environment that contains Salt, as well as all of the runtime dependencies to run Salt.
 
 Salt establishes an agentic, bidirectional, event-driven communication between the Server and managed system. Salt Minion runs on the managed system, and enables the Server to remotely issue commands and execute code.
 
@@ -28,7 +28,7 @@ Web UI::
 Web UI enables you to specify the IP address or FQDN of a new client, and initiate the registration process. This is likely the easiest way to register a single client.
 
 Bootstrap Script::
-{lm} enables you to generate a shell script that you execute from a client. This is useful when registering a large number of clients automatically.
+{lm} enables you to generate a shell script footnote:[https://www.uyuni-project.org/uyuni-docs/en/uyuni/reference/admin/bootstrap-script.html] that you execute from a client. This is useful when registering a large number of clients automatically.
 
 Direct Salt Registration::
 --

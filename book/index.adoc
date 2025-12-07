@@ -1,15 +1,13 @@
 [separator=::]
-= Getting Started with Uyuni
+= The Little Book of Uyuni 
 :author: Marek Czernek
 :creator: {author}
 :copyright: 2025 Marek Czernek
 :email: marek.czernek@suse.com
 :revnumber: v0.0.1
 :revdate: 01.12.2025
-:revremark: First draft
 :doctype: book
 :leveloffset: +1
-//:front-cover-image: image:cover.jpeg[width=1700,height=2800]
 :sectnums:
 :sectlinks:
 :toc: left
